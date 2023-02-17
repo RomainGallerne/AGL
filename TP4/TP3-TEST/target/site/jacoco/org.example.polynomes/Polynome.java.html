@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Polynome.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TP3-TEST</a> &gt; <a href="index.source.html" class="el_package">org.example.polynomes</a> &gt; <span class="el_source">Polynome.java</span></div><h1>Polynome.java</h1><pre class="source lang-java linenums">package org.example.polynomes;
+
+import java.util.ArrayList;
+
+public class Polynome {
+    private ArrayList&lt;Monome&gt; monomes; // on maintient la liste par ordre de degrés croissants
+
+<span class="fc" id="L8">    public Polynome() {</span>
+<span class="fc" id="L9">        monomes=new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L10">    }</span>
+
+    public String toString(){
+<span class="fc" id="L13">        String result=&quot;&quot;;</span>
+<span class="fc bfc" id="L14" title="All 2 branches covered.">        for (Monome m:monomes){</span>
+<span class="fc" id="L15">            result+=m;</span>
+<span class="fc" id="L16">        }</span>
+<span class="pc bpc" id="L17" title="1 of 2 branches missed.">        if (monomes.isEmpty()){result=&quot;polynôme nul&quot;;}</span>
+<span class="fc" id="L18">        return result;</span>
+    }
+    // ajout d'une copie de m au polynome
+    public void ajoutMonome(Monome m){
+
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        if (!monomes.isEmpty()) {</span>
+<span class="fc" id="L24">            int posCourante=0;</span>
+<span class="fc" id="L25">            Monome courant=monomes.get(posCourante);</span>
+            // on cherche la position d'insertion
+<span class="pc bpc" id="L27" title="1 of 4 branches missed.">            while (courant.getDegre()&lt;m.getDegre() &amp;&amp; posCourante&lt; monomes.size()-1){</span>
+                // on passe au monome suivant
+<span class="nc" id="L29">                posCourante++;</span>
+<span class="nc" id="L30">                courant=monomes.get(posCourante);</span>
+            }
+<span class="fc bfc" id="L32" title="All 2 branches covered.">            if (courant.getDegre()==m.getDegre()){</span>
+                // on avait déjà un monome de même degré, on ajoute les coeff
+<span class="fc" id="L34">                courant.ajoutAuCoeff(m.getCoeff());</span>
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">                if (courant.getCoeff()==0){</span>
+                    // on retire le monome nul de la liste
+<span class="nc" id="L37">                    monomes.remove(courant);</span>
+                }
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">            }else if (courant.getDegre()&gt;m.getDegre()){</span>
+                // on a dépassé la position d'insertion, insertion de m avant le monome courant
+<span class="nc" id="L41">                monomes.add(posCourante, new Monome(m)); // juste m dans les premières questions</span>
+            } else {
+                // on insère à la fin
+<span class="fc" id="L44">                monomes.add(new Monome(m)); // juste m dans les premières questions</span>
+            }
+<span class="fc" id="L46">        }else{ // premier monome du polynome</span>
+<span class="fc" id="L47">            monomes.add(new Monome(m)); // juste m dans les premières questions</span>
+        }
+<span class="fc" id="L49">    }</span>
+
+    /**
+     * Multiplication par un monome
+     * @param facteur monome par lequel on multiplie le polynome
+     * @return le produit du polynpome receveur par facteur
+     */
+    public Polynome produit(Monome facteur){
+<span class="fc" id="L57">        Polynome result=new Polynome();</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        for (Monome m:monomes){</span>
+<span class="fc" id="L59">            result.ajoutMonome(Monome.produit(m,facteur));</span>
+<span class="fc" id="L60">        }</span>
+<span class="fc" id="L61">        return result;</span>
+    }
+    public Polynome somme(Polynome terme){
+<span class="fc" id="L64">            Polynome result=new Polynome();</span>
+            // on duplique this dans result (prévoir un autre constructeur par copie !!)
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">            for (Monome m:monomes){</span>
+<span class="nc" id="L67">                result.ajoutMonome(m);</span>
+<span class="nc" id="L68">            }</span>
+            // on ajoute les monomes de terme
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            for (Monome mterme:terme.monomes){</span>
+<span class="fc" id="L71">                result.ajoutMonome(mterme);</span>
+<span class="fc" id="L72">            }</span>
+<span class="fc" id="L73">            return result;</span>
+}
+    public Polynome produit(Polynome facteur){
+<span class="fc" id="L76">        Polynome result=new Polynome();</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        for (Monome m:monomes){</span>
+<span class="fc" id="L78">            result=result.somme(facteur.produit(m));</span>
+<span class="fc" id="L79">        }</span>
+<span class="fc" id="L80">        return result;</span>
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>
